@@ -1,5 +1,6 @@
 package com.bios.android.notesapp.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -21,7 +22,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bios.android.notesapp.R;
 import com.bios.android.notesapp.dto.Login;
+import com.bios.android.notesapp.dto.User;
 import com.bios.android.notesapp.util.GsonUtils;
+import com.bios.android.notesapp.util.URLs;
 
 import org.json.JSONObject;
 
@@ -70,11 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
@@ -123,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void makeLogin(Login login) {
-        String url = "http://192.168.1.8:9002/api/v1/users/login";
+        String url = URLs.LOGIN;
 
         JSONObject jsonObject = GsonUtils.toJSON(login);
 
@@ -132,7 +130,9 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(LoginActivity.class.getName().substring(0, 10), "Siii! " + response.toString());
-                        showProgress(false);
+
+                        User user = GsonUtils.parse(response.toString(), User.class);
+                        loggedIn(user);
                     }
                 },
                 new Response.ErrorListener() {
@@ -145,6 +145,13 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
         requestQueue.add(request);
+    }
+
+    private void loggedIn(User user) {
+        Intent intent = new Intent(this, NotesActivity.class);
+        intent.putExtra(NotesActivity.EXTRA_USER_ID, user);
+
+        startActivity(intent);
     }
 
     private void showProgress(boolean show) {
