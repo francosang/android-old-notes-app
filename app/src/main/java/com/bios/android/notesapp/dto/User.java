@@ -7,6 +7,7 @@ public class User implements Serializable {
     private Integer id;
     private String name;
     private String email;
+    private String pass;
 
     public Integer getId() {
         return id;
@@ -30,5 +31,13 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
+    public String getPass() {
+        return pass;
     }
 }

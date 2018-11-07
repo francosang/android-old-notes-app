@@ -73,8 +73,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        Button registrarButton = (Button) findViewById(R.id.email_sign_up_button);
+        registrarButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                register();
+            }
+        });
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    private void register() {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
     }
 
     private void attemptLogin() {
