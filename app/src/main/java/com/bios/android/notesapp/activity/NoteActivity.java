@@ -24,7 +24,7 @@ import org.json.JSONObject;
 
 import static com.bios.android.notesapp.activity.NotesActivity.EXTRA_USER_ID;
 
-public class NotaActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity {
 
     private RequestQueue requestQueue;
     private EditText contentEdit;
@@ -34,7 +34,7 @@ public class NotaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nota);
+        setContentView(R.layout.activity_note);
 
         this.requestQueue = Volley.newRequestQueue(this);
 

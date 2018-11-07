@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bios.android.notesapp.R;
@@ -26,9 +24,6 @@ import com.bios.android.notesapp.dto.User;
 import com.bios.android.notesapp.util.GsonUtils;
 import com.bios.android.notesapp.util.URLs;
 
-import org.json.JSONObject;
-
-import java.io.Serializable;
 import java.util.List;
 
 public class NotesActivity extends AppCompatActivity {
@@ -81,7 +76,7 @@ public class NotesActivity extends AppCompatActivity {
     }
 
     private void newNote() {
-        Intent intent = new Intent(this, NotaActivity.class);
+        Intent intent = new Intent(this, NoteActivity.class);
         intent.putExtra(NotesActivity.EXTRA_USER_ID, user);
 
         startActivity(intent);
