@@ -1,5 +1,6 @@
 package com.bios.android.notesapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,10 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bios.android.notesapp.R;
 import com.bios.android.notesapp.adapter.NotesAdapter;
@@ -41,30 +44,33 @@ public class NotesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                newNote();
+
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         requestQueue = Volley.newRequestQueue(this);
+
         adapter = new NotesAdapter();
         adapter.setOnNoteSelectedListener(new NotesAdapter.OnNoteSelectedListener() {
             @Override
             public void onClick(Note note) {
 
+
             }
         });
 
-        RecyclerView recyclerView = findViewById(R.id.activity_notes_rv_notes);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.activity_notes_rv_notes);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
 
@@ -72,6 +78,14 @@ public class NotesActivity extends AppCompatActivity {
         if (user != null) {
             this.user = user;
         }
+    }
+
+    private void newNote() {
+        Intent intent = new Intent(this, NotaActivity.class);
+        intent.putExtra(NotesActivity.EXTRA_USER_ID, user);
+
+        startActivity(intent);
+
     }
 
     @Override
@@ -102,11 +116,18 @@ public class NotesActivity extends AppCompatActivity {
     }
 
     private void retriveNotes() {
-        String url = URLs.USER_NOTES;
-        JsonObjectRequest request = new JsonObjectRequest(url, null,
-                new Response.Listener<JSONObject>() {
+        String userId = String.valueOf(user.getId());
+
+        String url = URLs.USER_NOTES.replace("{user_id}", userId);
+
+        Log.i("URL", url);
+
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(String response) {
                         updateNotes(response);
                     }
                 },
@@ -120,8 +141,8 @@ public class NotesActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
-    private void updateNotes(JSONObject response) {
-        List<Note> notes = GsonUtils.parseList(response.toString(), Note[].class);
+    private void updateNotes(String response) {
+        List<Note> notes = GsonUtils.parseList(response, Note[].class);
         adapter.setNotes(notes);
         adapter.notifyDataSetChanged();
     }

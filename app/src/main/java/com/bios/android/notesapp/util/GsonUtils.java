@@ -20,7 +20,9 @@ public class GsonUtils {
     }
 
     public static JSONObject toJSON(Object o) {
-        String s = new Gson().toJson(o);
+        Gson gson = new Gson();
+
+        String s = gson.toJson(o);
         try {
             return new JSONObject(s);
         } catch (JSONException e) {

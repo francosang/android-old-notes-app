@@ -29,6 +29,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.bios.android.notesapp.activity.LoginActivity" />
         </activity>
+        <activity android:name=".activity.NotaActivity"></activity>
     </application>
 
 </manifest>

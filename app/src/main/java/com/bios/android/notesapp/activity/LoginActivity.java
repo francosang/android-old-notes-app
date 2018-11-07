@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -44,12 +45,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mEmailView = findViewById(R.id.email);
 
         requestQueue = Volley.newRequestQueue(this);
 
-        mPasswordView = findViewById(R.id.password);
+        mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -61,7 +60,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+
+        mEmailView.setText("franconecat@gmail.com");
+        mPasswordView.setText("123");
+
+        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,7 +90,11 @@ public class LoginActivity extends AppCompatActivity {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_field_required));
+            focusView = mPasswordView;
+            cancel = true;
+        } else if (!isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -125,13 +133,25 @@ public class LoginActivity extends AppCompatActivity {
 
         JSONObject jsonObject = GsonUtils.toJSON(login);
 
-        JsonObjectRequest request = new JsonObjectRequest(url, jsonObject,
+        /*
+         {
+            "email": "sdfsdfsdf",
+            "pass": "dsafsdf"
+         }
+          */
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(LoginActivity.class.getName().substring(0, 10), "Siii! " + response.toString());
 
-                        User user = GsonUtils.parse(response.toString(), User.class);
+                        String jsonResponde = response.toString();
+
+                        User user = GsonUtils.parse(jsonResponde, User.class);
                         loggedIn(user);
                     }
                 },
@@ -139,7 +159,9 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(LoginActivity.class.getName().substring(0, 10), "Error!");
+
                         error.printStackTrace();
+
                         showProgress(false);
                     }
                 });
@@ -171,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() >= 3;
+        return password.trim().length() >= 3;
     }
 
 }
